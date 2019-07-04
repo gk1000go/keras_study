@@ -1,0 +1,103 @@
+--预测明天股票涨跌（APPL）
+Bidirectional - LSTM
+效果更好，收敛更快，准确率也相比丹村LSTM更高些。
+
+--参数
+hidden_units=64
+drop_lstm_ratio=0.3
+
+n_batch=64
+n_epochs=150
+
+n_time_step=22
+n_dim=3
+
+---单纯LSTM
+# create module
+model=Sequential()
+model.add(LSTM(units=hidden_units,input_shape=(n_time_step, n_dim)))
+model.add(Dropout(drop_lstm_ratio))
+model.add(Dense(1,activation='sigmoid'))
+model.compile(optimizer='adam',loss='binary_crossentropy',metrics=['accuracy'])
+history=model.fit(train_x, train_y, batch_size=n_batch, epochs=n_epochs, verbose=1, validation_data=[test_x, test_y])
+
+---结果
+Train on 2000 samples, validate on 1000 samples
+Epoch 1/150
+2000/2000 [==============================] - 5s 2ms/step - loss: 0.6923 - acc: 0.5280 - val_loss: 0.6900 - val_acc: 0.5260
+Epoch 2/150
+2000/2000 [==============================] - 1s 281us/step - loss: 0.6786 - acc: 0.5780 - val_loss: 0.6680 - val_acc: 0.5980
+Epoch 3/150
+2000/2000 [==============================] - 1s 281us/step - loss: 0.6693 - acc: 0.5900 - val_loss: 0.6594 - val_acc: 0.6130
+...
+Epoch 10/150
+2000/2000 [==============================] - 1s 273us/step - loss: 0.6613 - acc: 0.6090 - val_loss: 0.6553 - val_acc: 0.6160
+Epoch 11/150
+2000/2000 [==============================] - 1s 279us/step - loss: 0.6594 - acc: 0.6075 - val_loss: 0.6498 - val_acc: 0.6360
+Epoch 12/150
+...
+2000/2000 [==============================] - 1s 273us/step - loss: 0.5863 - acc: 0.6725 - val_loss: 0.5776 - val_acc: 0.7080
+Epoch 62/150
+2000/2000 [==============================] - 1s 281us/step - loss: 0.5670 - acc: 0.7080 - val_loss: 0.5981 - val_acc: 0.6830
+Epoch 63/150
+...
+2000/2000 [==============================] - 1s 305us/step - loss: 0.3929 - acc: 0.8275 - val_loss: 0.4121 - val_acc: 0.8040
+Epoch 101/150
+2000/2000 [==============================] - 1s 660us/step - loss: 0.3795 - acc: 0.8335 - val_loss: 0.4166 - val_acc: 0.8030
+Epoch 102/150
+...
+2000/2000 [==============================] - 1s 281us/step - loss: 0.2343 - acc: 0.8900 - val_loss: 0.3820 - val_acc: 0.8300
+Epoch 147/150
+2000/2000 [==============================] - 1s 285us/step - loss: 0.2403 - acc: 0.8915 - val_loss: 0.3451 - val_acc: 0.8480
+Epoch 148/150
+2000/2000 [==============================] - 1s 283us/step - loss: 0.2494 - acc: 0.8910 - val_loss: 0.3543 - val_acc: 0.8320
+Epoch 149/150
+2000/2000 [==============================] - 1s 297us/step - loss: 0.2368 - acc: 0.8960 - val_loss: 0.3704 - val_acc: 0.8460
+Epoch 150/150
+2000/2000 [==============================] - 1s 289us/step - loss: 0.2335 - acc: 0.8920 - val_loss: 0.3482 - val_acc: 0.8560
+
+---Bi-LSTM
+# create module
+model=Sequential()
+model.add(Bidirectional(LSTM(units=hidden_units,input_shape=(n_time_step, n_dim))))
+model.add(Dropout(drop_lstm_ratio))
+model.add(Dense(1,activation='sigmoid'))
+model.compile(optimizer='adam',loss='binary_crossentropy',metrics=['accuracy'])
+history=model.fit(train_x, train_y, batch_size=n_batch, epochs=n_epochs, verbose=1, validation_data=[test_x, test_y])
+
+---结果
+Train on 2000 samples, validate on 1000 samples
+Epoch 1/150
+2000/2000 [==============================] - 5s 2ms/step - loss: 0.6845 - acc: 0.5655 - val_loss: 0.6648 - val_acc: 0.6290
+Epoch 2/150
+2000/2000 [==============================] - 1s 498us/step - loss: 0.6566 - acc: 0.6210 - val_loss: 0.6285 - val_acc: 0.6450
+Epoch 3/150
+2000/2000 [==============================] - 1s 533us/step - loss: 0.6287 - acc: 0.6445 - val_loss: 0.6064 - val_acc: 0.6810
+Epoch 4/150
+2000/2000 [==============================] - 1s 484us/step - loss: 0.5889 - acc: 0.6830 - val_loss: 0.5864 - val_acc: 0.6920
+...
+Epoch 10/150
+2000/2000 [==============================] - 1s 499us/step - loss: 0.4546 - acc: 0.7930 - val_loss: 0.4476 - val_acc: 0.7930
+Epoch 11/150
+2000/2000 [==============================] - 1s 510us/step - loss: 0.4161 - acc: 0.8065 - val_loss: 0.4189 - val_acc: 0.8030
+Epoch 12/150
+2000/2000 [==============================] - 1s 507us/step - loss: 0.3638 - acc: 0.8425 - val_loss: 0.4024 - val_acc: 0.8120
+...
+2000/2000 [==============================] - 1s 550us/step - loss: 0.0961 - acc: 0.9605 - val_loss: 0.2189 - val_acc: 0.9070
+Epoch 87/150
+2000/2000 [==============================] - 1s 551us/step - loss: 0.0848 - acc: 0.9745 - val_loss: 0.2217 - val_acc: 0.8980
+Epoch 88/150
+2000/2000 [==============================] - 1s 549us/step - loss: 0.0942 - acc: 0.9675 - val_loss: 0.2321 - val_acc: 0.8940
+Epoch 89/150
+2000/2000 [==============================] - 1s 559us/step - loss: 0.1004 - acc: 0.9645 - val_loss: 0.2307 - val_acc: 0.8980
+...
+Epoch 146/150
+2000/2000 [==============================] - 1s 544us/step - loss: 0.0167 - acc: 0.9965 - val_loss: 0.3189 - val_acc: 0.9000
+Epoch 147/150
+2000/2000 [==============================] - 1s 564us/step - loss: 0.0229 - acc: 0.9925 - val_loss: 0.3632 - val_acc: 0.8910
+Epoch 148/150
+2000/2000 [==============================] - 2s 1ms/step - loss: 0.0323 - acc: 0.9870 - val_loss: 0.3820 - val_acc: 0.8820
+Epoch 149/150
+2000/2000 [==============================] - 1s 550us/step - loss: 0.0202 - acc: 0.9950 - val_loss: 0.3549 - val_acc: 0.9000
+Epoch 150/150
+2000/2000 [==============================] - 1s 567us/step - loss: 0.0143 - acc: 0.9975 - val_loss: 0.3345 - val_acc: 0.8930
